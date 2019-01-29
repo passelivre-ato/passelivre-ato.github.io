@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg viewBox="0 0 20 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>ic_save</title>
+    <desc>Save Icon</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Ícones" transform="translate(-915.000000, -648.000000)" fill="#333333">
+            <path d="M932.142857,648 L917.857143,648 C916.285714,648 915.014286,649.2 915.014286,650.666667 L915,672 L925,668 L935,672 L935,650.666667 C935,649.2 933.714286,648 932.142857,648 L932.142857,648 Z M932.142857,668 L925,665.093333 L917.857143,668 L917.857143,650.666667 L932.142857,650.666667 L932.142857,668 L932.142857,668 Z" id="ic_save"></path>
+        </g>
+    </g>
+</svg>

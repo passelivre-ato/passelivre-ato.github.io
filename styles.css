@@ -1,0 +1,79 @@
+body
+{
+    font-family:Arial;
+	font-size:20px;
+	margin:0;
+}
+
+div
+{
+    position: absolute;
+}
+
+/*
+VPAID ads are served in an iframe that is set to 100% width and height of the video player's dimensions. This template is meant to adapt this iframe's size so the default width and height its' top most container are set to 100%. We recommend you use the 100% values but if your ad has fixed pixel dimensions you can change the #adContainer styles to suit your needs.
+*/
+#adContainer
+{
+    width:100%;
+    height:100%;
+    border:0px solid red;
+}
+
+#logo
+{
+    width: 20%;
+    height: 20%;
+    margin: 15px;
+	background:url(../images/logo.png);
+	background-size:contain;
+    background-repeat: no-repeat;
+}
+
+/*
+In certain environments clicks on the player's video element are not possible.
+This overlay is meant to simulate a click on the player's video element.
+ */
+#videoClickOverlay
+{
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+#buttons
+{
+    right: 0px;
+    bottom: 55px;
+}
+
+.button
+{
+    background-color: #000;
+    color: #fff;
+    font-weight: normal;
+    padding: 10px;
+    margin-bottom: 7px;
+    border: 1px solid #000;
+    border-radius: 2px;
+    cursor: pointer;
+    position: relative;
+    text-align: center;
+	opacity:.80;
+	-moz-opacity:.80; 
+	filter:alpha(opacity=80); 
+	display:none;
+	
+}
+
+.button:hover
+{
+	background-color:#333;
+	border: 1px solid #aaa;
+}
+
+#skipBtn
+{
+	display:block !important;
+
+}

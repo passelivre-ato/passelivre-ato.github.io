@@ -1,0 +1,1 @@
+window['_ttq_tt_uol'].push(['_setTTProfile','_sao paulo_sao paulo_br_1548800901712_3377570741']);window['_ttq_tt_uol'].push(['_setProfile','']);

@@ -1,0 +1,154 @@
+'use strict';
+
+var urlApp = "https://push.folha.com.br";
+
+var config = {
+    apiKey: "AIzaSyAmRcjqquEwaBuCjnt7yznxZEjOel_nTXk",
+    authDomain: "folha-de-s-paulo.firebaseapp.com",
+    databaseURL: "https://folha-de-s-paulo.firebaseio.com",
+    projectId: "folha-de-s-paulo",
+    storageBucket: "folha-de-s-paulo.appspot.com",
+    messagingSenderId: "863168087730"
+};
+
+firebase.initializeApp(config);
+
+const applicationServerPublicKey = 'BBTMhdXlB96_yA14VpyKeIxLpEN_1wDHmvhLB_j0iDWAzh02qeKtII5qQlsUOQY1UiRciklXplxdKFXiBfOyjsU';
+
+const authKey = 'AIzaSyAX9mXgJELPKm3f3o0l7CAd9sde1OPlkdo';
+
+const messaging = firebase.messaging();
+messaging.usePublicVapidKey(applicationServerPublicKey);
+
+
+let swRegistration = null;
+
+if ('serviceWorker' in navigator && 'PushManager' in window) {
+    navigator.serviceWorker.register('//www.folha.uol.com.br/firebase-messaging-sw.js')
+        .then((registration) => {
+            firebase.messaging().useServiceWorker(registration);
+            swRegistration = registration;
+            /*console.log('ServiceWorker is fine');*/
+        })
+        .catch(function () {
+            console.warn('service worker failed');
+        });
+}
+
+function requestPermissionFirebase() {
+    messaging.requestPermission().then(function() {
+        //console.log('Notification permission granted.');
+        // TODO(developer): Retrieve an Instance ID token for use with FCM.
+        if(isTokenSentToServer()){
+            //console.log('Token already saved.');
+        }else{
+            getRegToken();
+        }
+        return messaging.getToken();
+    }).then(function (token) {
+        subscribeTokenToTopic(token, 'push_web ');
+
+        var xhr = new XMLHttpRequest();
+
+        xhr.open('POST', urlApp + "/device/save", true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onload = function() {};
+        xhr.send(encodeURI('identifier=' + token + '&device=web' + '&push=yes'));
+    }).catch(function(err) {
+        console.log('Unable to get permission to notify.', err);
+    });
+}
+
+function getRegToken(argument) {
+    messaging.getToken().then(function(currentToken) {
+        if (currentToken) {
+            // sendTokenToServer(currentToken);
+            //console.log(currentToken);
+            setTokenSentToServer(true);
+        } else {
+            console.log('No Instance ID token available. Request permission to generate one.');
+            setTokenSentToServer(false);
+        }
+    }).catch(function(err) {
+        console.log('An error occurred while retrieving token. ', err);
+        showToken('Error retrieving Instance ID token. ', err);
+        setTokenSentToServer(false);
+    });
+}
+
+function setTokenSentToServer(sent) {
+    window.localStorage.setItem('sentToServer', sent ? 1 : 0);
+}
+
+function isTokenSentToServer() {
+    return window.localStorage.getItem('sentToServer') == 1;
+}
+
+function subscribeTokenToTopic(token, topic) {
+    fetch('https://iid.googleapis.com/iid/v1/'+token+'/rel/topics/'+topic, {
+        method: 'POST',
+        headers: new Headers({
+            'Authorization': 'key='+authKey
+        })
+    }).then(response => {
+        if (response.status < 200 || response.status >= 400) {
+            throw 'Error subscribing to topic: '+response.status + ' - ' + response.text();
+        }
+        //console.log('Subscribed to "'+topic+'"');
+    }).catch(error => {
+        console.error(error);
+    })
+}
+
+var urlNotOriginal = "";
+var urlNot = "";
+messaging.onMessage(function(payload){
+    //console.log('Mensagem recebida no primeiro plano: ', payload);
+    urlNotOriginal = payload.data['original_url'];
+    urlNot = payload.data['folha_url'];
+    var notificationTitle = "";
+    var notificationOptions = {
+        body: payload.data.body,
+        icon: payload.data.icon,
+        image: payload.data['gcm.notification.image'],
+        vibrate: [100, 50, 100],
+        tag: 'folha'
+    };
+    var notification = new Notification("Folha de S.Paulo", notificationOptions);
+
+    notification.onclick = function(event) {
+        event.preventDefault(); // prevent the browser from focusing the Notification's tab
+
+        fetch(urlNot, {
+            method: 'get',
+        });
+        window.open(urlNotOriginal, '_blank');
+    }
+});
+
+const requestPermissionDialog = document.querySelector('.c-push-notification');
+
+function openRequestPermissionDialog(status) {
+    if (status === 'default') {
+        requestPermissionDialog.classList.remove('is-invisible');
+    }
+}
+
+function getStatus() {
+    if (!window.Notification) {
+        return false;
+    }
+    return window.Notification.permission;
+}
+
+openRequestPermissionDialog(getStatus());
+
+requestPermissionDialog.querySelector('.c-button').addEventListener('click', event => {
+    requestPermissionFirebase();
+    requestPermissionDialog.remove();
+});
+
+requestPermissionDialog.querySelector('.c-button--primary').addEventListener('click', event => {
+    requestPermissionFirebase();
+    requestPermissionDialog.remove();
+});

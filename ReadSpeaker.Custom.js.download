@@ -1,0 +1,1 @@
+ReadSpeaker.q(function(){"Android"===rspkr.c.data.browser.OS&&(rspkr.c.data.browser.html5AudioFormat="mp3")});
